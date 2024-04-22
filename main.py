@@ -1,16 +1,24 @@
-# This is a sample Python script.
+import pandas as pd
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+# Load the CSV from the provided URL
+url = "https://raw.githubusercontent.com/evelinag/StarWars-social-network/master/data/characters.csv"
+characters_df = pd.read_csv(url, header=None)
 
+# Pre-process the names to split into first and last names and generate emails
+# Skip entries with no spaces (single-word names)
+processed_characters = []
+for name in characters_df[0]:
+    parts = name.split()
+    if len(parts) > 1:
+        first_name = parts[0]
+        last_name = ' '.join(parts[1:])
+        email = f"{first_name.lower()}.{last_name.replace(' ', '').lower()}@example.com"
+        processed_characters.append([first_name, last_name, email])
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+# Convert the list to a DataFrame
+processed_characters_df = pd.DataFrame(processed_characters, columns=["first_name", "last_name", "email"])
 
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+# Save to a CSV file
+csv_path = "./processed_star_wars_characters.csv"
+processed_characters_df.to_csv(csv_path, index=False)
+print(f"Processed characters saved to {csv_path}")
